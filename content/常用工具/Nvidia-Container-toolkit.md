@@ -41,8 +41,14 @@ sudo systemctl restart docker
 
 注意⚠️：`nvidia-container-toolkit` 中包含了 `nvidia-ctk` 配置工具，所以 `apt install nvidia-container-toolkit` 安装这个包之后，自然就有nvidia-ctk可以直接使用。但是 libnvidia-container并不在安装包中。`libnvidia-container` → 它本体在独立的 `libnvidia-container1` 包里,**不在** toolkit 包内部,但 toolkit 包**依赖**它,所以 `apt` 会自动一并装上。
 不过，`nvidia-container-toolkit` 和 `libnvidia-container`都不在Ubuntu官方源里，它们只在 NVIDIA 维护的仓库里发布，所以必须先把这个仓库添加到 apt 的仓库源中，apt 才知道去哪儿拉这些包。
-## <font color="grape">容器的启动</font>
-#容器构建过程
+
+##### <font color="lightblue">Nvidia-Container-toolkit 发布地址</font>
+
+`nvidia-container-toolkit` 和 `libnvidia-container` 这两个包都在 `nvidia.github.io/libnvidia-container/` 这同一个仓库里发布。你加的就是这一个源，`apt install nvidia-container-toolkit` 时，apt 从这个仓库里既能找到 `nvidia-container-toolkit` 本体，也能找到它依赖的 `libnvidia-container1`（以及 `libnvidia-container-tools`、`nvidia-container-toolkit-base` 等），一并解析、一并装上。不需要再加第二个源。所以上面只是把这个地址增加到了 apt 源中就够了。
+
+这里库的命名上有个历史问题：仓库 URL 沿用了老项目名 `libnvidia-container`，但它现在发布的是**整条工具链的所有包**，不只是 `libnvidia-container1` 那一个库。所以名字看着像"只发库"，实际整套都在里面。
+
+## <font color="grape">容器的构建过程</font>
 
 容器启动时，从 `docker run` 到真正把容器启动起来，要经过以下步骤。
 
@@ -123,7 +129,8 @@ Docker 创建对象的时候，默认由 containerd调用 runc 来完成构建�
 
  runc 遵守的时OCI runtime spec。它没有针对nvidia GPU驱动等资源进行处理的部分，所以，如果直接使用runc, 我们没法进行挂载驱动等一系列挂载容器的行为，所以它使用了另一个二进制可执行程序来构建容器，就是 nvidia-container-runtime。
 
-#注册
+##### <font color="lightblue">注册二进制构建程序 nvidia-container-runtime</font>
+ 
  由于这是另一个容器构建程序，而Docker默认的是使用 runc, 所以我们需要把这个构建程序注册在dockerd中，让它在需要的时候，知道使用  nvidia-container-runtime 这个二进制来构建容器。所以，我们要把这个程序注册在 `/etc/docker/daemon.json`中. 注册之后，dockerd 就知道在特定情况下调用 nvidia-container-runtime 来创建容器，而不是默认的runc. 
  注册的时候我们使用的是
  
