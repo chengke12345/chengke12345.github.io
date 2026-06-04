@@ -18,11 +18,11 @@ q1 和 k1 算 attention weight, 然后乘以v1的到o1。q2去和k1, k2算出 2�
 
 ![[Pasted image 20260325003447.png]]
 
-所以 q4 直接去跟之前存下来的 k1~k3 算 attention, 也跟 k4 自己算 attention。然后得到 4 个 attention weight。然后把它们跟 v1~v4 做 weighted sum。得到下一个输出 o4。这样就可以<font color="#eb4349">节省输入token后，计算 v1~v3, k1~k3 需要的时间(要把输入乘上一个 Matrix 才能把 k 和 v 计算出来)</font>。所以，我们会把已经算出来的k 和 v 存下来，以留待日后使用。
+所以 q4 直接去跟之前存下来的 k1-k3 算 attention, 也跟 k4 自己算 attention。然后得到 4 个 attention weight。然后把它们跟 v1-v4 做 weighted sum。得到下一个输出 o4。这样就可以<font color="#eb4349">节省输入token后，计算 v1-v3, k1-k3 需要的时间(要把输入乘上一个 Matrix 才能把 k 和 v 计算出来)</font>。所以，我们会把已经算出来的k 和 v 存下来，以留待日后使用。
 
 ![[Pasted image 20260325003942.png]]
 
-之后再进来第五个token。虽然前面有 4 个 token，但是它们的 V 和 K 不需要再重新计算了。第五个Token进来只需要算自己的 q5, k5, v5 , 然后再去计算q5与 k1～k4 以及和 k5 自己的 attention值，再和 v1~v5 做 weighted sum 就可以得到o5了。它就不需要再算前面已经算出来的 k1~k4 和 v1~v4 了。这就是 KV Cache 的概念。
+之后再进来第五个token。虽然前面有 4 个 token，但是它们的 V 和 K 不需要再重新计算了。第五个Token进来只需要算自己的 q5, k5, v5 , 然后再去计算q5与 k1-k4 以及和 k5 自己的 attention值，再和 v1-v5 做 weighted sum 就可以得到o5了。它就不需要再算前面已经算出来的 k1-k4 和 v1-v4 了。这就是 KV Cache 的概念。
 
 ## <font color="grape">KVCache撑爆显存</font>
 
