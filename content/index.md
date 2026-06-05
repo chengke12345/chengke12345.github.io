@@ -9,6 +9,7 @@ title: Tech Notes
 
 - [[LLM/Flash Attention 加快模型推理速度]]
 - [[LLM/KV Cache]]
+- [[LLM/LLM推理基本原理]]
 
 ## Tools 常用工具
 
