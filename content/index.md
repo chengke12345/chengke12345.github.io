@@ -16,7 +16,10 @@ title: Tech Notes
 ## Nvidia/算子/kernel
 
 - [[nvidia/Nvidia-Container-toolkit]]
-
+- [[nvidia/Nvidia 软件栈架构]]
+- [[nvidia/算子架构与原理]]
+- [[nvidia/vLLM中的算子]]
+- [[nvidia/模型、框架与GPU支持]]
 
 ## Tools 常用工具
 
