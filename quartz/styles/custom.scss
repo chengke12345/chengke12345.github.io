@@ -1,3 +1,27 @@
 @use "./variables.scss" as *;
 
-// put your custom CSS here!
+
+.callout[data-callout="menu"] {
+  --color: var(--light);
+  --border: var(--lightgray);
+  --bg: #fff;
+
+  background-color: #fff;
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.callout[data-callout="menu"] > .callout-title {
+  color: var(--dark);
+  cursor: pointer;
+}
+
+.callout[data-callout="menu"] > .callout-title .callout-title-inner,
+.callout[data-callout="menu"] > .callout-title .callout-title-inner p {
+  color: var(--dark);
+}
+
+.callout[data-callout="menu"] > .callout-title > .callout-icon {
+  display: none;
+}
