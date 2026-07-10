@@ -145,7 +145,7 @@ Source: 选 **GitHub Actions**（不是 Deploy from a branch）
 
 #### 四、 添加 GitHub Actions 工作流
 
-在本地的quartz仓库中，新建 GitHub 工作流。GitHub Actions 是根据这个工作流的配置，来自动完成调用 Quartz，部署静态网站的。
+在本地的quartz仓库中，新建 GitHub 工作流。GitHub Actions 是根据这个工作流的配置，来自动完成调用 Quartz，并部署到Github Pages服务器上，成为静态网站的。
 
 新建文件： `.github/workflows/deploy.yml` 内容为：
 ```yml
@@ -154,7 +154,7 @@ name: Deploy Quartz site to GitHub Pages
 on:
   push:
     branches:
-      - v4
+      - v5
 
 permissions:
   contents: read
@@ -162,23 +162,46 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: false
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+
+      - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
+
+      - name: Cache dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Cache Quartz plugins
+        uses: actions/cache@v5
+        with:
+          path: .quartz/plugins
+          key: ${{ runner.os }}-plugins-${{ hashFiles('quartz.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-plugins-
+
       - name: Install Dependencies
         run: npm ci
+
+      - name: Install Quartz plugins
+        run: npx quartz plugin install
+
       - name: Build Quartz
         run: npx quartz build
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -189,7 +212,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
@@ -202,9 +225,9 @@ jobs:
 ```shell
 git add .
 git commit -m "init: 部署 Quartz 站点"
-git push origin v4
+git push origin v5
 ```
-注意分支是v4, 不是 main -- Quartz 用 v4 作为主分支。
+注意分支是v5, 不是 main -- Quartz 用 v4 作为主分支。
 
 ## Step 5. 等待构建 
 
@@ -301,31 +324,35 @@ GitHub Actions 是 GitHub 提供的云端自动化服务。每个 GitHub 仓库�
 on:
   push:
     branches:
-      - v4
+      - v5
 ```
 
-**触发条件**：当 v4 分支收到 push 时，启动这个工作流。
+**触发条件**：当 v5 分支收到 push 时，启动这个工作流。
 
 ```yaml
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 ```
 
-**在哪运行**：GitHub 起一台 Ubuntu 22.04 虚拟机来跑。
+作业 jobs 有两个任务，一个是构建 build, 一个是部署 deploy
+**在哪运行**：在 GitHub 起一台 最新的 ubuntu-latest 虚拟机来跑。
 
 ```yaml
-    steps:
-      - uses: actions/checkout@v4    # 把你的仓库代码拉到这台机器上
-      - uses: actions/setup-node@v4  # 装 Node.js
-      - run: npm ci                  # 装 Quartz 依赖
-      - run: npx quartz build        # 跑 Quartz 编译，生成 HTML
+    steps: # 省略了 -name: xxxx
+      - uses: actions/checkout@v6        # 把你的仓库代码拉到这台机器上
+      - uses: actions/setup-node@v6      # 装 Node.js
+      - run: npm ci                      # 装 Quartz 依赖
+      - run: npx quartz plugin install   # 安装           
+      - run: npx quartz build            # 跑 Quartz 编译，构建生成 HTML
       - uses: actions/upload-pages-artifact@v3   # 把生成的 HTML 打包
 ```
 
-**做什么事**：checkout 代码 → 装 Node → 装依赖 → 编译 → 打包产物。
+**做什么事**：checkout 代码 → 装 Node → 装依赖 → 装插件 → 编译 → 打包产物。
 这其实是本地做的流程，推送到GitHub Pages仓库中，让GitHub Actions 在云端再做一次。
 做完这步，就相当于静态网站已经生成，我们已经做到了本地的网页预览环节。
+
+接下来就要把它部署到 GitHub Pages 上去了。
 
 ```yaml
   deploy:
@@ -339,15 +366,15 @@ jobs:
 #### 完整链路
 
 ```
-你 git push origin v4
+你 git push origin v5
    ↓
 GitHub 收到 push 事件
    ↓
 GitHub 检查 .github/workflows/ 下的 yml 文件
    ↓
-deploy.yml 的触发条件匹配（push 到 v4）
+deploy.yml 的触发条件匹配（push 到 v5）
    ↓
-GitHub 起一台 ubuntu-22.04 虚拟机
+GitHub 起一台 ubuntu-latest 虚拟机
    ↓
 按 deploy.yml 描述的步骤依次执行
    ↓
