@@ -24,3 +24,9 @@ title: Technical Blogs
 - [[Git-GitHub/Github Pages & Quartz]]
 - [[Git-GitHub/Github Actions]]
 </details>
+
+<details class="home-dropdown">
+<summary>Nginx</summary>
+
+- [[Nginx/Nginx 快速基础]]
+</details>
