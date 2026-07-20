@@ -85,3 +85,55 @@ entrypoint = 覆盖镜像的 ENTRYPOINT
 command    = 覆盖镜像的 CMD
 ```
 
+# Dockerfile 常用指令说明
+
+<font color="orange">ARG</font> : `ARG VLLM_VERSIOn=v0.21.0` ARG 用来定义 Docker 镜像构建阶段使用的变量的默认值。 后面构建时可以用传入参数覆盖，例如 `docker compose build --build-arg VLLM_VERSION=v0.21.0`。 
+写在 FROM 前面的 ARG 可以用于选择基础镜像，但不会自动进入 FROM 后面的构建阶段。如果后续指令要读取它，需要再次声明。例如
+```dockerfile
+ARG VLLM_VERSION=v0.21.0
+FROM vllm/vllm-openai:${VLLM_VERSION}
+
+ARG VLLM_VERSION
+RUN echo "${VLLM_VERSION}"
+```
+
+<font color="orange">ENV</font>: `ENV PYTHONUNBUFFERD=1`, 定义环境变量。与 ARG 不同, ENV 定义的变量保存在镜像中，构建期间和容器运行期间都可以使用。
+
+<font color="orange">LABEL</font>：这个指令用于给 Docker 镜像添加说明信息的元数据，不会改变程序的运行逻辑。构建完成后，可以通过 `docker image inspect heteroserve/vllm-openai:v0.21.0-sm75` 
+查看镜像相关的信息。LABEL 可能用于说明镜像是什么，做什么的，标记镜像版本，维护者，源代码地址。供镜像仓库，CI/CD，安全扫描工具识别。
+
+<font color="orange">EXPOSE</font>: `EXPOSE 8000` 表示的是容器内服务监听的端口号，即这个镜像会<font color="deeppink">预期</font>通过容器内部的 TCP 8000 端口提供服务。但是 EXPOSE 只是声明和说明，不会自动把端口开放到宿主机。
+真正的端口监听和映射由两部分组成：
+- `CMD` 指定的 `--port 参数`，它决定了docker 容器内部在监听哪个端口。
+- `compose.yml` 中会有一个配置项，`ports -“8000: 8000”`, 会宿主机端口，映射到容器端口。格式就是`宿主机端口: 容器端口`。 
+访问流程是
+```
+客户端访问 localhost:8000
+          ↓
+宿主机 8000
+          ↓ Docker 端口映射
+容器内部 8000
+          ↓
+vLLM OpenAI API
+```
+<font color="deppink">EXPOSE 只是用于说明预期使用哪个端口，而并不是说容器会监听这个端口并开放给宿主机。真实监听的端口，再CMD中配置。</font>
+
+<font color="orange">STOPSIGNAL</font>: `STOPSIGNAL SIGTERM`. SIGTERM 是 Linux/Unix 的“请求进程终止" 信号，编号通常是15。Dockerfile 中的 `STOPSIGNAL SIGTERM`, 表示 Docker 容器停止时，先向容器主进程发送 `SIGTERM`, 让程序有机会优雅完整的退出。
+```
+Docker 发送 SIGTERM
+        ↓
+vLLM 开始停止服务
+        ↓
+拒绝或结束请求
+        ↓
+关闭 PP/TP worker
+        ↓
+释放 NCCL、共享内存和 GPU 资源
+        ↓
+容器正常退出
+```
+我们在 compose.yml 中，还可以配置
+```compose.yml
+stop_grace_period: 2m
+```
+表示发送 `SIGTREM` 信号之后，最多等2分钟，如果容器进程仍未退出，Docker就会发送`SIGKILL`信号。
