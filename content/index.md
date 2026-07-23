@@ -26,7 +26,8 @@ title: Technical Blogs
 </details>
 
 <details class="home-dropdown">
-<summary>Nginx</summary>
 
-- [[Nginx/Nginx 快速基础]]
+<summary>YAML</summary>
+
+- [[YAML]]
 </details>
