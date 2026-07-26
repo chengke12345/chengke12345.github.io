@@ -31,3 +31,9 @@ title: Technical Blogs
 
 - [[YAML]]
 </details>
+
+<details class="home-dropdown">
+<summary>线性代数简明手册</summary>
+
+- [[线性代数简明手册/线性代数查阅]]
+</details>
