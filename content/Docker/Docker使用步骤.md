@@ -32,7 +32,7 @@ RUN pip3 install -r requrirements.txt
 
 ### <font color="#b48ff4">Step2: 创建镜像image</font>
 
-我们可以使用 docker build 来创建一个镜像。我们在项目根目录下，运行`docker build -t my-proj .` ,  -t 表示 tag/标签，指定了创建镜像的名字，最后面的 `.` 告诉 docker 应该在当前目录下寻找 Dockerfile 文件。
+我们可以使用 docker build 来创建一个镜像。我们在项目根目录下，运行`docker build -t my-proj .` ,  -t 表示 tag/标签，指定了创建镜像的名字，最后面的 `.` 指的是 Docker 的上下文，表示docker 在构建过程中，可以访问哪些本地文件。如果没有显示的指定 Dockerfile，也应该在当前目录下寻找 Dockerfile 文件。
 
 第一次调用 `docker build` 会比较慢，因为会下载必要的镜像文件。再次调用就会快很多，因为它会缓存操作。
 
