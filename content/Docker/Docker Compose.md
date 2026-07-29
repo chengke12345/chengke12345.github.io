@@ -102,6 +102,23 @@ services:
 注意：多个 profile 是“或”的关系——匹配任意一个即可启用该服务，不要求全部同时激活。
 从术语上，debug 和 dev 是两个不同的profile。adminer 这个服务属于两个profiles，一个是 debug, 一个是 dev。
 
+# 3. container_name
+
+container_name 和 profiles 一样也都是 docker compose specification 中规定的标准字段。它表示的是容器的名字。在一个宿主机上，一个docker容器的名字，必须是唯一的。
+
+如果不设置 container_name, 就会自动生成类似 `heteroserve-vllm-main-1`的名字，其中heteroserve是开始设定的 compose.yml 的名字 `name: heteroserve`, `vllm-main` 是这个service的名字，`1` 是给的一个编号。如果设定了 `container_name: heteroserve-main` 就会把容器名字固定为 `heteroserve-main`。
+而 <font color="orange">profiles 是指这个容器所属服务分组，它决定的是这个服务是否参与本次docker容器服务的编排启动</font>。比如 `docker compose --profile main up` 才会启动属于 main profile的服务。所以：
+
+```
+container_name → 容器叫什么
+profiles       → 该服务什么时候被启用
+```
+
+container_name 有两个限制：
+- 同一个 Docker 主机上名称必须唯一
+- 设置后该服务不能扩展为多个副本
+通常不必设置 container_name， Compose 可以通过服务名管理容器。
+
 # 3.  build
 
 build表示，这个服务的镜像需要根据指定的 Dockerfile 在本地构建。根据提供的 Dockerfile 构建出容器进程来提供服务。比如：
@@ -140,6 +157,8 @@ docker compose --profile main up -d --build
 理论上我们可以通过 Dockerfile, 指定镜像的构建过程，再使用 docker build 完成镜像的构建。再使用 docker run 启动镜像进程提供服务，这是手动起docker的过程。
 在 docker compose, 我们直接把 Dockerfile 给compose, 在 docker compose up 的时候，它就会先调用 docker build, 根据 Dockerfile 以及我们配置的其他参数，构建出这个镜像。然后再使用这个镜像启动 docker 容器。这个过程完全可以用手动分开执行，但是 docker compose 帮助我们把这个过程全部一气呵成了。
 
+ <font color="#b48ff4">--build 参数</font>
+
 构建好的镜像，仍然是放在默认的本地缓存镜像目录中。如果再次执行 `docker compose up` 的时候。如果不带 `--build` 参数，即 `docker compose up -d` compose 会直接使用已有的镜像和容器，不再执行镜像构建。如果第二次还是带了 `--build`，compose 仍然会请求执行构建，但docker build 工具会检查，如果没有变化就使用已有的镜像和容器启动。
 - 不带 `--build`：通常完全不进入构建流程，直接使用已有镜像。
 - 带 `--build`：会进入构建检查，但没有变化时直接复用缓存，不会重新执行耗时构建。
@@ -171,7 +190,8 @@ PID 1  vllm serve
         └── worker 3
 ```
 启动了 `init:true` 时，容器内通常是：
-```PID 1  docker-init/tini
+```
+PID 1  docker-init/tini
         └── vllm serve
               ├── worker 1
               ├── worker 2
@@ -347,7 +367,7 @@ logging:
 >`max-size: 100m`：单个日志文件最大 100MB
 >`max-file: "3"`: 最多保留3个轮转日志文件。
 
-所以，每个容器的日志文件最多 300MB, 避免日志无限增长。`docker logs -f <容器名>` 或者 `docker compose logs -f` 来查看日志。
+所以，每个容器的日志文件最多 300MB, 避免日志无限增长。`docker logs -f <服务名>` 或者 `docker compose logs -f <服务名>` 来查看日志。
 注意⚠️：前面的 `VLLM_LOGGING_LEVEL` 决定 vLLM 输出哪些日志。logging 决定 Docker 如何保存这些日志。
 
 # 17. ports
@@ -384,6 +404,7 @@ deploy:
 >  `driver: nvidia` 使用 NVIDIA 驱动
 >  `device_ids: ["0"]` 将宿主机的第0号GPU提供给容器
 >  `capabilities: [gpu]`: 要求该设备具有GPU能力，这是必填项
+>  * `count:2`: 还有可能有配置 count, 它表示使用宿主机的几张GPU，这里使用了`device_ids`，就需要使用 count 了。  
 
 这里并不是预留某个大小的显存，而是让容器获得指定 GPU 的访问权限，其他容器仍然可以同时使用这一张卡。
 现代 docker compose up 支持这样的 GPU 配置，但 deploy 中某些面向集群的选项可能被普通compose忽略。
@@ -415,4 +436,99 @@ deploy:
 ```
 
 具体的 Compose Deploy Specification, 需要查询官方文档。
+使用 `deploy...devices`的方式，<font color="orange">是当前 compose 使用的标准配置 GPU 的方式</font>。
+# 19. docker compose exec 
 
+`docker compose exec` 用来在已经运行的服务容器内执行一条额外的命令，不会新建容器，也不会替换主程序。比如
+
+```bash
+docker compose exec vllm-main nvidia-smi
+```
+
+表示在 vllm-main 容器内执行 nvidia-smi. 常用的方式为:
+
+```bash
+# 进入容器的交互式 Shell
+docker compose exec vllm-main sh
+
+# 查看容器内环境变量
+docker compose exec vllm-main env
+
+# 查看容器内模型目录
+docker compose exec vllm-main ls -lah /models
+```
+
+它和 docker 命令的区别是：
+
+```bash
+docker exec <容器名> ...          需要知道实际容器名
+docker compose exec <服务名> ...  使用 compose.yml 中的服务名
+```
+
+所以，即使没有设置 container_name, 也能通过服务名，让容器执行命令。比如
+
+```bash
+docker compose exec vllm-main sh
+```
+
+前提是该服务容器已经运行。它默认带交互终端，命令执行结束之后，这个额外进程也会结束，vLLM服务的容器则继续进行。
+
+# 20. runtime
+
+`runtime: runc` 字段是 Docker Compose Specification 的标准字段。它用来指定，Docker 应该使用哪一种容器运行时(构建容器的二进制可执行程序)来创建和启动该服务的容器。
+<font color="orange">Docker 默认使用 runc，它负责把镜像进程启动为隔离的 Linux 容器进程</font>。它不是运行环境，而是更底层的容器启动的实现。
+
+对于 Nvidia GPU，旧配置中常会看到
+```
+runtime: nvidia
+```
+意思是使用已在 Docker 守护进程 dockerd 中注册的 nvidia-container-runtime, 它会在容器启动前注入GPU设备，驱动库等。具体的关于 nvidia-container-runtime 的注入机制，参考 [Nvidia-Container-toolkit](Docker/Nvidia-Container-toolkit)
+
+当前的 Compose 一般使用标准的 `deploy...devices` 的 GPU 配置方式，通常无需再写 `runtime: nvidia` 
+<font color="deppink">宿主机正确安装并配置 Nvidia-Containter-Toolkit 才是前提。</font>
+
+如果同时使用 `runtime: nvidia` 和 `deploy...devices` 也不会造成冲突，两者同时设置，通常可以正常工作。比如：
+```yaml
+runtime: nvidia
+deploy:
+  resources:
+    reservations:
+      devices:
+        - driver: nvidia
+          device_ids: ["0", "1"]
+          capabilities: [gpu]
+```
+- `runtime: nvidia` 指定使用 Nvidia 容器运行时，即 nvidia-container-runtime 启动容器。
+- `deploy...devices`: 指定容器使用宿主的哪些 GPU 设备，这里是 0 和 1。
+它们不冲突，但对当前方案而言通常是**重复且不必要**的：Docker 官方的 Compose GPU 配置示例只使用 `deploy.resources.reservations.devices`，不需要额外声明 `runtime: nvidia`
+
+# 21. depends_on
+
+`depends_on` 用来声明服务之间的依赖关系，主要控制启动与停止顺序。它是 Docker Compose Specification 的标准服务字段。例如：
+```yaml
+services:
+  gateway:
+    depends_on:
+      vllm-main:
+        condition: service_healthy
+  vllm-main:
+    healthcheck:
+      ...
+```
+含义是，先启动 vllm-main 这个服务，等待它的 healthcheck 变为 healthy 之后，再启动 gateway. gateway 这个服务的启动，是依赖于 vllm-main 这个服务启动完成之后，并且处于 healthy 的前提条件。
+这样设置之后，Compose在停止服务的时候，会先停止 gateway, 再停止被依赖的 vllm-main。
+
+# 22. cap_add
+
+`cap_add` 用来给容器增加指定的Linux 内核权限。cap_add 实际上是 Linux capabilities addition。容器即使以 `root` 用户运行，默认也不会拥有全部内核特权，Docker会限制它可执行的敏感操作。`cap_add` 按需补充某一种权限：比如：
+```yaml
+cap_add:
+  - IPC_LOCK
+```
+常见的 `cap_add` 的配置包括
+- `IPC_LOCK`：允许锁定内存页面，常与 `ulimits: { memlock: -1 }` 配合
+- `NET_ADMIN`：允许修改网络配置、路由、iptables 等
+- `SYS_ADMIN`：权限极大，涉及挂载、命名空间等操作，应谨慎授予
+- `ALL`：添加全部 capabilities，通常不建议
+它是 Compose Specification 标准服务字段；相反的字段是 `cap_drop`，用于移除默认拥有权限。
+<font color="orange">一般不建议额外添加 cap_add</font>。
