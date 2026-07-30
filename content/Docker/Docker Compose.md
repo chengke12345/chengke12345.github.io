@@ -296,7 +296,8 @@ volumes:
     read_only: true
 ```
 
-`source` 表示源, 具体的路径通过 `${MODEL_ROOT}`变量读取，变量没有或者值为空的情况下，就使用默认值 `/opt/models`。目标 `target` 是挂载到 Docker 容器内的 `/models` 目录下，访问权限是只读。这种方式，是要将宿主机中的某个目录绑定到 Docker 容器内的某个目录下，是为了读取宿主机上的某些文件或数据。
+`source` 表示源, 具体的路径通过 `${MODEL_ROOT}`变量读取，变量没有或者值为空的情况下，就使用默认值 `/opt/models`。<font color="orange">source 是宿主机上的文件或目录路径</font>。
+目标 `target` 是挂载到 Docker 容器内的 `/models` 目录下，访问权限是只读。这种方式，是要将宿主机中的某个目录绑定到 Docker 容器内的某个目录下，是为了读取宿主机上的某些文件或数据。
 
 volume
 ```yaml
@@ -315,6 +316,27 @@ volumes
 ```yml
 volumes:
   hf-cache:
+```
+
+<font color="#b48ff4"><b>volumes的短写法</b></font>
+
+我们经常会看到 volumes 的短写法，表示一个文件的绑定挂载：
+
+```yaml
+volumes: ["./deploy/nginx.conf:/etc/nginx/nginx,conf:ro"]
+```
+等价于：
+```yaml
+volumes:
+  - type: bind
+    source: ./deploy/nginx.conf
+    target: /etc/nginx/nginx.conf
+    read_only: true
+```
+
+所以，volumes 短写法的格式是
+```yaml
+volumes: ["宿主机路径 : 容器内路径 : 挂载模式"]
 ```
 
 # 14 healthcheck
@@ -372,7 +394,7 @@ logging:
 
 # 17. ports
 
-`ports` 表示“宿主机端口 → 容器端口”的映射关系。客户端访问宿主机:8000 → Docker转发 → 容器内vLLM:8000
+`ports` 表示<font color="orange">“宿主机端口 → 容器端口”</font>的映射关系。客户端访问宿主机:8000 → Docker转发 → 容器内vLLM:8000
 两个容器内部可以都使用 8000，只要宿主机端口不同，比如：
 ```yaml
 # 主模型
