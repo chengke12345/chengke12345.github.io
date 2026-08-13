@@ -13,7 +13,8 @@ title: Technical Blogs
 - [[Docker/Docker image 镜像管理方式]]
 - [[Docker/Docker 原理解析]]
 - [[Docker/Docker Compose]]
-- [[Docker/Nvidia-Container-toolkit]]
+- [[Docker/Nvidia-Container-Toolkit]]
+- [[Docker/Nvidia-Container-Toolkit 安装步骤]]
 </details>
 
 <details class="home-dropdown">
@@ -24,6 +25,13 @@ title: Technical Blogs
 - [[Git-GitHub/GitHub Flow]]
 - [[Git-GitHub/Github Pages & Quartz]]
 - [[Git-GitHub/Github Actions]]
+</details>
+
+<details class="home-dropdown">
+<summary>Nginx</summary>
+
+- [[Nginx/Nginx 快速基础]]
+- [[Nginx/nginx.conf 解析]]
 </details>
 
 <details class="home-dropdown">

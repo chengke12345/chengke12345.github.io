@@ -25,7 +25,7 @@ deploy
 
 # 以 vllm 服务的 compose为例
 
-下面的讨论，以一个 vllm 的 docker compose 编排容器的 compose.yml 文件为例。文件详见[image](Docker/Assets/vllm-compose-file)
+下面的讨论，以一个 vllm 的 docker compose 编排容器的 compose.yml 文件为例。文件详见[vllm-compose-file](Docker/Assets/vllm-compose-file)
 # 0. compose 自定义扩展配置
 
 `x-vllm-common: &vllm-common`  
@@ -77,7 +77,7 @@ services 下面的每一个子配置项都是一个具体的服务
 每个service下面有一个子配置项，叫做 profiles。profiles 是 docker compose 的可选服务分组功能，即用来控制哪些服务需要启动。
 
 执行 `docker compose up`, 默认只会启动没有配置 profiles 的 services. 上面的例子中，就只会启动app 和 db. 配置了 profiles 之后，我们要启动这个服务，就要通过指定 profile 来启动。比如
-`docker compose --profile debug up` 除了启动没有配置 profiles的服务外，还会启动 adminer服务，因为它的 profiles 是 debug。
+`docker compose --profile debug up` 除了启动没有配置 profiles 的服务外，还会启动 adminer服务，因为它的 profiles 是 debug。
 
 profiles 常用于，开发调试工具，测试服务 mock server，测试数据库，监控组件，不同环境的附加服务等，这些服务是根据需要启动的，而不是每次都默认启动。
 
@@ -101,6 +101,10 @@ services:
 ```
 注意：多个 profile 是“或”的关系——匹配任意一个即可启用该服务，不要求全部同时激活。
 从术语上，debug 和 dev 是两个不同的profile。adminer 这个服务属于两个profiles，一个是 debug, 一个是 dev。
+
+
+> [!NOTE] docker compose 启动
+> `docker compose --profile xxx up -d`, 启动 compose.yml 文件中配置的 profile 分组为 xxx 的服务，以及所有没有配置任何 profiles 的服务。`-d` 是  --detach，表示在后台执行。
 
 # 3. container_name
 
@@ -318,14 +322,20 @@ volumes:
   hf-cache:
 ```
 
+<font color="deeppink">命名卷通常还需要载顶层 volumes: 中声明，而绑定挂载不需要</font>
+
 <font color="#b48ff4"><b>volumes的短写法</b></font>
 
-我们经常会看到 volumes 的短写法，表示一个文件的绑定挂载：
+我们经常会看到 volumes 的短写法，
+
+<font color="orange">绑定挂载,bind</font>
 
 ```yaml
 volumes: ["./deploy/nginx.conf:/etc/nginx/nginx,conf:ro"]
 ```
+
 等价于：
+
 ```yaml
 volumes:
   - type: bind
@@ -334,10 +344,38 @@ volumes:
     read_only: true
 ```
 
-所以，volumes 短写法的格式是
+所以，绑定挂载短写法的格式是
 ```yaml
 volumes: ["宿主机路径 : 容器内路径 : 挂载模式"]
 ```
+
+<font color="orange">命名卷挂载, volume</font>
+
+```yaml
+volomes: [grafana-data:/var/lib/grafana]
+```
+
+等价于
+
+```yaml
+volumes:
+  - type: volume
+    source: grafana-data
+    target: /var/lib/grafana
+```
+
+命名卷挂载短写法的格式是
+```yaml
+volumes: ["宿主机路径 : 容器内路径 : 挂载模式"]
+```
+
+命名卷挂载短写法格式是：
+
+```yaml
+volumes: ["命名卷名字 : 容器内路径"]
+```
+
+<font color="deeppink">冒号前以 /、./ 或 ../ 开头，通常表示宿主机路径，对应的挂载就是绑定挂载。如果是一个普通名称，就表示命名卷的名字，对应的挂载是命名卷挂载。</font>
 
 # 14 healthcheck
 
