@@ -266,7 +266,7 @@ send_timeout 600s
 而不是 `proxy_send_timeout`。
 
 
-# 9. chunked_transfer_encoding(server/http)
+# 9. chunked_transfer_encoding (server/http)
 
 `chunked_transfer_encoding on`  表示允许 Nginx 在向客户端发送 HTTP/1.1 响应时，使用<font color="orange">分块传输编码</font>。普通响应可以提前知道完整大小，但 LLM 流式生成时，事先不知道最终响应有多大。这个配置可以让 Nginx 向客户端发送响应时，按数据块边生成边发送。按照
 ```

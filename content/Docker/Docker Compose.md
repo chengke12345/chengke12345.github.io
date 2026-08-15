@@ -26,6 +26,13 @@ deploy
 # 以 vllm 服务的 compose为例
 
 下面的讨论，以一个 vllm 的 docker compose 编排容器的 compose.yml 文件为例。文件详见[vllm-compose-file](Docker/Assets/vllm-compose-file)
+
+# 1. 顶层 name
+
+顶层 `name: heteroserve` 是 compose 项目名。注意⚠️，不是compose自定义网络的名字。 它用于标识，隔离这一组 Compose 资源。compose 默认创建的资源，通常会带上这个名字作为前缀，
+默认网络：`heteroserver_default`，数据卷: `heteroserve_data`等等。
+
+注意⚠️，compose 项目名只允许小写字符。
 # 0. compose 自定义扩展配置
 
 `x-vllm-common: &vllm-common`  

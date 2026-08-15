@@ -173,11 +173,12 @@ dockerd/libnetwork 中的 DNS 处理逻辑
 > - <font color="orange">所有网络使用同一个DNS，容器看到的都是127.0.0.11, 这是Docker提供的统DNS入口。</font>
 > - <font color="orange">一个容器若加入两个网络，同一个内置解析入口可以解析它所加入的两个网络中的名称。</font>
 > 
-> ```
-> 同一个 dockerd
-├── 容器 A → 127.0.0.11 → 只能看到 network-a 的记录
-├── 容器 B → 127.0.0.11 → 只能看到 network-b 的记录
-└── 容器 C → 127.0.0.11 → 加入了 A、B，可看到两个网络的记录 ```
+>```
+>同一个 dockerd
+>├── 容器 A → 127.0.0.11 → 只能看到 network-a 的记录
+>├── 容器 B → 127.0.0.11 → 只能看到 network-b 的记录
+>└── 容器 C → 127.0.0.11 → 加入了 A、B，可看到两个网络的记录
+>```
 
 <font color="#b48ff4"><b>多网络解析冲突</b></font>
 
@@ -204,3 +205,135 @@ billing-db
 ```
 
 <font color="deeppink">结论：一个容器可以加入多个网络，但应避免在这些网络中使用相同的服务名，确实重名时，使用 服务名.网络名 或者不同的网络别名。</font>
+
+# 4. 网络配置 networks
+
+一个 compose 项目默认会创建一个自定义网络，默认网络的名字为 `<项目名>_default`，这个 compose 项目中的各个服务，如果没有特别设置，启动起来之后，就加入这个网络。但是这些服务并不是一定要加入默认网络，也可以通过配置加入其他网络。
+
+<font color="#b48ff4"><b>顶层配置 networks </b></font>
+
+在跟 services 同层的地方，也就是顶层，我们可以配置 networks, 例如：
+
+```yaml
+name: myapp               # Compose 项目名 
+
+services:
+  web:
+    image: nginx
+    networks:
+      - frontend
+      - backend
+
+  db:
+    image: mysql
+    networks:
+      - backend
+
+  cache:
+    image: redis
+    # 未指定，自动加入 default
+
+networks:
+  frontend:              # Compose 文件内的网络标识
+	  name: pub_net      # Docker 中的实际网络名
+  backend:               # Docker 中实际网络名默认为 myapp_backend
+```
+
+顶层 networks, 下面配置的 `frontend`, `backend`, 是 Compose 内部的网络标识符，也就是在 Compose 内部可以使用它们作为两个网络的名字，但是在 Compose 外，Docker 中使用的网络名就是在标识符下的 name 定义的。比如上面 <font color="orange">frontend是一个网络的标识符，但是在 docker 系统中，它使用的网络名字就是 pub_net。</font> <font color="lightblue">对于没有定义 name 属性的网络标识符，它在 docker 中的实际网络名，通常就定义为</font> `项目名_网络标识符`。
+
+顶层 `networks` 本质上是，声明这个 Compose 项目允许服务使用哪些网络，以及这些网络如何获得。networks 先定义出网络的内部标识，然后通过 name 配置，要获该取网络要使用的外部名称。如果这个网络不存在，Compose就会创建，实际网络名，就是name配置或默认`项目名_网络标识符`
+
+如果明确，一定要使用已有网络，那么可以使用
+```yaml
+services:
+  app:
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true
+    name: existing_backend
+```
+
+`existing_backend` 必须要提前存在，否则 Compose 就会报错。这时，必须明确设置 `externel: true` 表示一定要使用外部网络。
+如果外部网络不存在，Compose不负责创建和删除它。默认情况下，docker compose down 的时候，会把这个 compose 创建的网络一并删除。如果使用的是已经存在，且不由这个 Compose 管理的网络，compose 就只管使用它，不负责创建或删除。<font color="orange">这才是 external 的真正含义。</font>
+
+<font color="#b48ff4"><b>顶层 networks 中配置 default</b></font>
+
+在顶层 networks 设置中，也可以设置 default 网络。例如
+```yaml
+services:
+  web:
+    image: nginx
+    # 没写 networks
+
+networks:
+  default:
+    name: company_network
+```
+
+这样就把 compose 的默认网络设置成了 company_network, 而不是为默认网络取名 `项目名_default`。但是所有没配置 networks 的服务，还是默认加入这个网络，因为它们认的是 default的内部标识符，和外部实际网络名无关。
+另外，如果配置了顶层networks，且没配 default, 那么如果compose中，有没配networks的服务，那么compose依然会创建默认网络，没配 networks的服务依然加入这个默认网络。
+
+<font color="#b48ff4"><b>服务中配置 networks </b></font>
+
+如果在服务中配置 networks, 就表示该服务会加入哪个网络，例如：
+
+```yaml
+services:
+  app:
+    networks:
+      - backend
+
+networks:
+  backend:
+```
+
+它表示 app 这个服务起来以后，加入 backend 这个内部标识符的网络。
+
+<font color="#b48ff4"><b>总结</b></font>
+
+>- 顶层 `networks:`：声明、配置可用网络
+>- 服务内的 `networks:`：选择加入哪些网络
+>- 普通网络声明：由 Compose 创建和管理
+>- `external: true`：使用 Compose 外部已有的网络
+>- `default:` 是特殊网络，顶层 `networks:` 不一定都是“额外网络”，也可以用来配置默认网络
+
+# 5. 服务/容器的网络 DNS 别名(alias)
+
+服务/容器启动起来以后，要加入网络，我们可以指定该服务/容器在网络中的 DNS 别名 alias
+
+```yaml
+services:
+  vllm-main:
+    networks:
+      default:                # 加入 default 网络
+        aliases:
+          - vllm-active       # 在这个网络内增加 DNS 别名
+```
+
+这里 vllm-main 是一个服务，它配置了networks，它默认会加入 default 网络。在这个网络中，该服务/容器有一个 DNS 别名叫做 vllm-active。这是节点在网络中的可被解析的 DNS 别名。
+
+典型的用法是，多个容器中，仅有一个会在网络中的时候，可以让这些容器使用同一个 alias， 这样其他部分就可以使用这个 alias 进行 DNS 解析。这个容器更换成其他容器，对网络中的其他部分是透明的，它们不需要做任何修改，只要这些更换的容器使用同一个 alias 就可以了。
+比如：
+```yaml
+services:
+  vllm-main:
+    networks:
+      default:
+        aliases:
+          - vllm-active
+
+  vllm-backup:
+    networks:
+      default:
+        aliases:
+          - vllm-active
+
+networks:
+  default:
+    name: heteroserve-network
+```
+
+主备模型，默认都会加入 default 网络， 但是，同一时间只有一个启动，所以把它们的 alias 都设置成 vllm-active, 这样的话网络其他部分就可以直接访问 vllm-active, 不用管它究竟是主模型还是备用模型。
