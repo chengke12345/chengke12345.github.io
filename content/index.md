@@ -2,47 +2,68 @@
 title: Technical Blogs
 ---
 
+# vLLM
+<details class="home-dropdown">
+<summary>GPU并行部署</summary>
+
+- [[vLLM/GPU并行部署策略分析(PP_vs_TP)]]
+</details>
+
+<br>
+
+# CUDA 
+<details class="home-dropdown">
+<summary>CUDA 算子</summary>
+
+- [[CUDA/算子架构与原理/算子架构与原理]]
+- [[CUDA/算子 kernel 的 AOT 和 JIT 编译模式]]
+- [[CUDA/模型、框架与GPU架构适配性/模型、框架与GPU架构适配性]]
+</details>
+
+
+<br>
+
 # 常用工具
 <details class="home-dropdown">
 <summary>Docker</summary>
 
-- [[Docker/Docker 简介]]
-- [[Docker/Dockerfile]]
-- [[Docker/Docker使用步骤]]
-- [[Docker/Docker的CS架构]]
-- [[Docker/Docker image 镜像管理方式]]
-- [[Docker/Docker 原理解析]]
-- [[Docker/Docker Compose]]
-- [[Docker/Nvidia-Container-Toolkit]]
-- [[Docker/Nvidia-Container-Toolkit 安装步骤]]
+- [[Tools/Docker/Docker 简介]]
+- [[Tools/Docker/Dockerfile]]
+- [[Tools/Docker/Docker使用步骤]]
+- [[Tools/Docker/Docker的CS架构]]
+- [[Tools/Docker/Docker image 镜像管理方式]]
+- [[Tools/Docker/Docker 原理解析]]
+- [[Tools/Docker/Docker Compose]]
+- [[Tools/Docker/Nvidia-Container-Toolkit]]
+- [[Tools/Docker/Nvidia-Container-Toolkit 安装步骤]]
 </details>
 
 <details class="home-dropdown">
 <summary>Git/GitHub</summary>
 
-- [[Git-GitHub/Git & GitHub]]
-- [[Git-GitHub/Git SSH]]
-- [[Git-GitHub/GitHub Flow]]
-- [[Git-GitHub/Github Pages & Quartz]]
-- [[Git-GitHub/Github Actions]]
+- [[Tools/Git-GitHub/Git & GitHub]]
+- [[Tools/Git-GitHub/Git SSH]]
+- [[Tools/Git-GitHub/GitHub Flow]]
+- [[Tools/Git-GitHub/Github Pages & Quartz]]
+- [[Tools/Git-GitHub/Github Actions]]
 </details>
 
 <details class="home-dropdown">
 <summary>Nginx</summary>
 
-- [[Nginx/Nginx 快速基础]]
-- [[Nginx/nginx.conf 解析]]
+- [[Tools/Nginx/Nginx 快速基础]]
+- [[Tools/Nginx/nginx.conf 解析]]
 </details>
 
 <details class="home-dropdown">
 
 <summary>YAML</summary>
 
-- [[YAML]]
+- [[Tools/YAML]]
 </details>
 
 <details class="home-dropdown">
 <summary>线性代数简明手册</summary>
 
-- [[线性代数简明手册/线性代数查阅]]
+- [[Tools/线性代数简明手册/线性代数查阅]]
 </details>
