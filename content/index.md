@@ -13,11 +13,12 @@ title: Technical Blogs
 
 # CUDA 
 <details class="home-dropdown">
-<summary>CUDA 算子</summary>
+<summary>算子基础 Operator</summary>
 
-- [[CUDA/算子架构与原理/算子架构与原理]]
-- [[CUDA/算子 kernel 的 AOT 和 JIT 编译模式]]
-- [[CUDA/模型、框架与GPU架构适配性/模型、框架与GPU架构适配性]]
+1. [[CUDA/算子架构与原理/算子架构与原理]]
+2. [[CUDA/算子 kernel 的 AOT 和 JIT 编译模式]]
+3. [[CUDA/模型、框架与GPU架构适配性/模型、框架与GPU架构适配性]]
+4. [[CUDA/vLLM attention backend]]
 </details>
 
 
