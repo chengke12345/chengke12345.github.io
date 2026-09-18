@@ -4,9 +4,17 @@ title: Technical Blogs
 
 # vLLM
 <details class="home-dropdown">
-<summary>GPU并行部署</summary>
+<summary>vLLM 框架中的算子</summary>
 
-- [[vLLM/GPU并行部署策略分析(PP_vs_TP)]]
+1. [[vLLM/vLLM_optrs/Turing架构sm_75约束分析]]
+2. [[vLLM/vLLM_optrs/vLLM backend算子选择]]
+3. [[vLLM/vLLM_optrs/xFormers]]
+</details>
+
+<details class="home-dropdown"> 
+<summary>vLLM GPU 并行策略</summary>
+
+1. [[vLLM/vLLM_GPU_Parallelism/GPU并行策略分析(PP_vs_TP)]]
 </details>
 
 <br>
@@ -24,7 +32,7 @@ title: Technical Blogs
 
 <br>
 
-# 常用工具
+# Tools
 <details class="home-dropdown">
 <summary>Docker</summary>
 
