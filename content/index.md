@@ -17,7 +17,7 @@ title: Technical Blogs
 1. [[vLLM/vLLM_GPU_Parallelism/GPU并行策略分析(PP_vs_TP)]]
 </details>
 
-<br>
+---
 
 # CUDA 
 <details class="home-dropdown">
@@ -29,8 +29,7 @@ title: Technical Blogs
 4. [[CUDA/vLLM attention backend]]
 </details>
 
-
-<br>
+---
 
 # Hardware Analysis
 <details class="home-dropdown">
@@ -40,7 +39,16 @@ title: Technical Blogs
 2. [[Hardware Analysis/ASUS Z270-A 主板分析/主板状态报告分析]]
 </details>
 
-<br>
+---
+
+# Linux
+<details class="home-dropdown">
+<summary>Linux 技术点</summary>
+
+1. [[Linux Concepts/THP Transparent Huge Page]]
+</details>
+
+---
 
 # Tools
 <details class="home-dropdown">
