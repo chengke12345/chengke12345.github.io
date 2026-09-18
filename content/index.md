@@ -32,6 +32,16 @@ title: Technical Blogs
 
 <br>
 
+# Hardware Analysis
+<details class="home-dropdown">
+<summary>ASUS Z270-A 主板分析</summary>
+
+1. [[Hardware Analysis/ASUS Z270-A 主板分析/PCIe接口约束分析与架构设计]]
+2. [[Hardware Analysis/ASUS Z270-A 主板分析/主板状态报告分析]]
+</details>
+
+<br>
+
 # Tools
 <details class="home-dropdown">
 <summary>Docker</summary>
