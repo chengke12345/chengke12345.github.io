@@ -12,21 +12,23 @@ title: Technical Blogs
 </details>
 
 <details class="home-dropdown"> 
-<summary>vLLM GPU 并行策略</summary>
+<summary>vLLM 机制简析</summary>
 
-1. [[vLLM/vLLM_GPU_Parallelism/GPU并行策略分析(PP_vs_TP)]]
+1. [[vLLM/vLLM_Topics/GPU并行策略分析(PP_vs_TP)]]
+2. [[vLLM/vLLM_Topics/vLLM引擎-V0与V1]]
+3. [[vLLM/vLLM_Topics/vLLM 上下文限制(max-model-len)与并发限制(max-num-seqs)]]
 </details>
 
 ---
 
 # CUDA 
 <details class="home-dropdown">
-<summary>算子基础 Operator</summary>
+<summary>算子Operator基础原理</summary>
 
-1. [[CUDA/算子架构与原理/算子架构与原理]]
-2. [[CUDA/算子 kernel 的 AOT 和 JIT 编译模式]]
-3. [[CUDA/模型、框架与GPU架构适配性/模型、框架与GPU架构适配性]]
-4. [[CUDA/vLLM attention backend]]
+1. [[CUDA/算子基础Operator/算子架构与原理/算子架构与原理]]
+2. [[CUDA/算子基础Operator/算子 kernel 的 AOT 和 JIT 编译模式]]
+3. [[CUDA/算子基础Operator/模型、框架与GPU架构适配性/模型、框架与GPU架构适配性]]
+4. [[CUDA/算子基础Operator/vLLM attention backend]]
 </details>
 
 ---
