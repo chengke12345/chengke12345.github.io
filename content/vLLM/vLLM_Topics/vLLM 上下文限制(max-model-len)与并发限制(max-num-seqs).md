@@ -10,6 +10,7 @@ vLLM 部署模型的时候，启动有两个重要参数，`max-model-len` 与 `
 
 >注意⚠️：`max-model-len` 是用户输入 prompt 的长度 + 推理结果的总长度。例如 `max-model-len=8192`, 输入 9000 tokens, 那就会返回 400。如果输入 7000 tokens 并要求的最长输出 2000 tokens, 也会被拒绝，总长度超过限制了。所以它的限制是
 > `输入token数 + 输出token数 ≤ max-model-len`
+> 如果我们输入的 tokens 数量小于 `max-model-len`, 但是模型推理产生的 tokens，加起来超过了 `max-model-len` 限制，框架会在达到上限时，强制停止生成，结束原因就是长度限制。我们不需要提前知道“模型自然生成多长”，框架会根据当前seq长度加上已生成 tokens 数，持续检查是否触碰到 `max-model-len`。 
 
 `max-model-len` <u>长度限制，是 vLLM 框架设置的限制，与大模型本身无关</u>。返回 `HTTP 400 Bad Request` 是 vLLM 框架在请求校验阶段的行为，发现长度超限后就拒绝请求，这个请求不会进入模型推理。不是模型 "看完后拒绝回答"，模型不负责返回 HTTP 状态码。
 

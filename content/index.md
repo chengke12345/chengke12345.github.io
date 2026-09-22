@@ -19,6 +19,16 @@ title: Technical Blogs
 3. [[vLLM/vLLM_Topics/vLLM 上下文限制(max-model-len)与并发限制(max-num-seqs)]]
 </details>
 
+<details class="home-dropdown">
+<summary>生产化与可观测(Prometheus+DCGM+Grafana)</summary>
+
+1. [[vLLM/monitoring/Prometheus]]
+2. [[vLLM/monitoring/DCGM & DCGM-Exporter]]
+3. [[vLLM/monitoring/Grafana]]
+4. [[vLLM/monitoring/Grafana-Dashboard 配置步骤]]
+5. [[vLLM/monitoring/Prometheus+DCGM+Grafana]]
+</details>
+
 ---
 
 # CUDA 
