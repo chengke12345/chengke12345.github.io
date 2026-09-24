@@ -17,16 +17,18 @@ title: Technical Blogs
 1. [[vLLM/vLLM_Topics/GPU并行策略分析(PP_vs_TP)]]
 2. [[vLLM/vLLM_Topics/vLLM引擎-V0与V1]]
 3. [[vLLM/vLLM_Topics/vLLM 上下文限制(max-model-len)与并发限制(max-num-seqs)]]
+4. [[vLLM/vLLM_Topics/Locust 压力测试]]
 </details>
 
 <details class="home-dropdown">
-<summary>生产化与可观测(Prometheus+DCGM+Grafana)</summary>
+<summary>生产化与可观测(Prometheus + DCGM + Grafana + Gradio)</summary>
 
 1. [[vLLM/monitoring/Prometheus]]
 2. [[vLLM/monitoring/DCGM & DCGM-Exporter]]
 3. [[vLLM/monitoring/Grafana]]
 4. [[vLLM/monitoring/Grafana-Dashboard 配置步骤]]
 5. [[vLLM/monitoring/Prometheus+DCGM+Grafana]]
+6. [[vLLM/monitoring/Gradio]]
 </details>
 
 ---
@@ -96,7 +98,7 @@ title: Technical Blogs
 
 <details class="home-dropdown">
 
-<summary>YAML</summary>
+<summary>YAML解析</summary>
 
 - [[Tools/YAML]]
 </details>
