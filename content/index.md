@@ -82,11 +82,11 @@ title: Technical Blogs
 <details class="home-dropdown">
 <summary>Git/GitHub</summary>
 
-- [[Tools/Git-GitHub/Git & GitHub]]
-- [[Tools/Git-GitHub/Git SSH]]
-- [[Tools/Git-GitHub/GitHub Flow]]
-- [[Tools/Git-GitHub/Github Pages & Quartz]]
-- [[Tools/Git-GitHub/Github Actions]]
+1. [[Tools/Git-GitHub/Git & GitHub]]
+2. [[Tools/Git-GitHub/GitHub Flow]]
+3. [[Tools/Git-GitHub/Git SSH]]
+4. [[Tools/Git-GitHub/Github Pages & Quartz]]
+5. [[Tools/Git-GitHub/Github Actions]]
 </details>
 
 <details class="home-dropdown">
