@@ -92,8 +92,8 @@ title: Technical Blogs
 <details class="home-dropdown">
 <summary>Nginx</summary>
 
-- [[Tools/Nginx/Nginx 快速基础]]
-- [[Tools/Nginx/nginx.conf 解析]]
+1. [[Tools/Nginx/Nginx 快速基础]]
+2. [[Tools/Nginx/nginx.conf 配置解析]]
 </details>
 
 <details class="home-dropdown">
