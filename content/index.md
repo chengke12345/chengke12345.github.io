@@ -97,10 +97,15 @@ title: Technical Blogs
 </details>
 
 <details class="home-dropdown">
-
 <summary>YAML解析</summary>
 
 - [[Tools/YAML]]
+</details>
+
+<details class="home-dropdown">
+<summary>Google Colab</summary>
+
+1. [[Tools/Google Colab]]
 </details>
 
 <details class="home-dropdown">
