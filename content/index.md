@@ -66,6 +66,14 @@ title: Technical Blogs
 
 # Tools
 <details class="home-dropdown">
+<summary>HuggingFace</summary>
+
+1. [[Tools/Hugging Face/HuggingFace]]
+2. [[Tools/Hugging Face/HuggingFace 模型运行设备]]
+</details>
+
+
+<details class="home-dropdown">
 <summary>Docker</summary>
 
 - [[Tools/Docker/Docker 简介]]
