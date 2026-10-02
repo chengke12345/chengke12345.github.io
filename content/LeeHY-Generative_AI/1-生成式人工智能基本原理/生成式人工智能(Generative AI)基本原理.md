@@ -13,19 +13,17 @@
 现在的 Vocabulary 非常巨大，至少都有数十万个 token。
 
 > [!NOTE] 人工智能与文字接龙
-> 
-一个语言模型要能够正确的进行文字接龙，必须拥有两方面的知识。
-<font color="orange">「语言知识」</font> ：能够理解人类语言的语法。比较容易学，模型学习某种语言只要上百万份文章就足矣。 
-<font color="orange">「世界知识」</font> ：物理世界运行的规则规律。难以学习，无穷无尽。
+> 一个语言模型要能够正确的进行文字接龙，必须拥有两方面的知识。
+> <font color="orange">「语言知识」</font> ：能够理解人类语言的语法。比较容易学，模型学习某种语言只要上百万份文章就足矣。 
+> <font color="orange">「世界知识」</font> ：物理世界运行的规则规律。难以学习，无穷无尽。
 
 
 > [!NOTE] 大语言模型的参数
-> 
-大语言模型输出的是下一个 token 的概率分布。语言模型可以看作是一个函数 f(x) = ax + b; 把文本 x 看作输入，通过语言模型 ax + b, 得到输出概率分布 f(x). f 就是语言模型。a, b 叫做<font color="orange">「参数」</font>。通常一个语言模型都有非常大量的参数。现在的大模型，<u>百亿参数遍地走，十亿参数谁都有</u>。大语言模型的“大”，就是指非常大量的参数。<font color="lightblue">这些参数不是通过人工设定的，而是通过资料自动「学习」得到的。</font>![[Pasted image 20260219214332.png]]
+> 大语言模型输出的是下一个 token 的概率分布。语言模型可以看作是一个函数 f(x) = ax + b; 把文本 x 看作输入，通过语言模型 ax + b, 得到输出概率分布 f(x). f 就是语言模型。a, b 叫做<font color="orange">「参数」</font>。通常一个语言模型都有非常大量的参数。现在的大模型，<u>百亿参数遍地走，十亿参数谁都有</u>。大语言模型的“大”，就是指非常大量的参数。<font color="lightblue">这些参数不是通过人工设定的，而是通过资料自动「学习」得到的。</font>![[Pasted image 20260219214332.png]]
 
   <font color="#b48ff4">「chat template」</font> : 为了让语言模型更好的理解用户意思，我们使用的平台通常会在 prompt 前后加入一些信息，再交给大语言模型处理。这些信息叫做 chat template。每一个模型用的 chat template 都不相同。注意，具体可以使用什么 chat template, 这和我们使用模型有关。
  
- > 比如，为了让语言模型能够正常回答问题，并且不会在遇到问题时，接龙出其他奇怪的内容，语言模型平台通常会在我们提问的前后加上一些内容，促使语言模型回答问题，如 “使用者问「问题内容」 AI答：”，这样语言模型收到 prompt 以后，就会正常回答了。
+ >-  比如，为了让语言模型能够正常回答问题，并且不会在遇到问题时，接龙出其他奇怪的内容，语言模型平台通常会在我们提问的前后加上一些内容，促使语言模型回答问题，如 “使用者问「问题内容」 AI答：”，这样语言模型收到 prompt 以后，就会正常回答了。
  
  <font color="#b48ff4">「system prompt」</font> : 每次我们提供 prompt，平台都会自动加入一些基本信息(今天的日期， 等等)。这些开发者加入的，系统自动每次交互都会自动加上的prompt，叫做 「system prompt」。
 
@@ -47,8 +45,7 @@
 
 
 > [!NOTE] 生成式人工智能
-> 
-让机器学会产生<font color="orange">复杂</font>而<font color="orange">有结构</font>的物件。有结构指的是，由有限的基本单位所构成，这些基本单位，叫做 token。复杂指的是，虽然基本单位是有限的，但是组合起来就是无限的。让机器学会生成复杂而有结构的物件，就是生成式人工智能做的事情。
+> 让机器学会产生<font color="orange">复杂</font>而<font color="orange">有结构</font>的物件。有结构指的是，由有限的基本单位所构成，这些基本单位，叫做 token。复杂指的是，虽然基本单位是有限的，但是组合起来就是无限的。让机器学会生成复杂而有结构的物件，就是生成式人工智能做的事情。
 
 生成式 AI 就是输入 一个 x 产生一个 y, 而 y 就是复杂而有结构的物件。
 
@@ -97,9 +94,8 @@ $$
 
 
 > [!NOTE] tokenizer 和 model
->
-每一个模型的下载，我们都会从 Hugging Face Hub 上下载两个“物件”，一个是 tokenizer， 一个是 model.  
-<font color="orange">tokenizer 记录模型所使用的 token, 也就是 vocabulary</font>. 而 <font color="orange">model 存储了模型的参数，也就是所谓的权重</font>。 
+>每一个模型的下载，我们都会从 Hugging Face Hub 上下载两个“物件”，一个是 tokenizer， 一个是 model.  
+><font color="orange">tokenizer 记录模型所使用的 token, 也就是 vocabulary</font>. 而 <font color="orange">model 存储了模型的参数，也就是所谓的权重</font>。 
 
 ## Phase 1: 输出一个 token
 
@@ -133,7 +129,7 @@ $$
 
 ![[Pasted image 20260204202804.png]]
 
-> 注意⚠️：模型产生的输出 token，也是一串整数标识符，它无法直接产生文字。所以在把答案发送给用户之前，要进行「解码」，将 token ids 解码转换为用户能看懂的文字。
+> - 注意⚠️：模型产生的输出 token，也是一串整数标识符，它无法直接产生文字。所以在把答案发送给用户之前，要进行「解码」，将 token ids 解码转换为用户能看懂的文字。
 
 另外，model.generate() 产生的输出包含了输入的 token_ids。它生成 token 的结束条件是生成了代表结束的 token，或到达了长度上限。
 
@@ -168,8 +164,8 @@ Transformers 提供了一个函数 ，「tokenizer.apply_chat_template」，可�
 
 前面使用模型的方式，更多是为了说明如何使用模型的原理。真正使用 HuggingFace 的模型的时候，有一个更直接、更简单的方法，就是 pipeline.
 
-> 一般情况下，我们需要大致三个步骤，从文件转换为input_ids，再将 input_ids 给模型产出 output_ids，再将 output_ids 转换为文字返回客户端。就是encode, decode 的过程。
-> 我们可以直接调用 pipeline,  让 encode 和 decode 的部分全部可以省略。
+>-  一般情况下，我们需要大致三个步骤，从文件转换为input_ids，再将 input_ids 给模型产出 output_ids，再将 output_ids 转换为文字返回客户端。就是encode, decode 的过程。
+>- 我们可以直接调用 pipeline,  让 encode 和 decode 的部分全部可以省略。
 
 
 ![[Pasted image 20260207182916.png]]
