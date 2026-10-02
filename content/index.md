@@ -2,6 +2,15 @@
 title: Technical Blogs
 ---
 
+# LLM
+<details>
+<summary>生成式人工智能基础</summary>
+
+1. [[LeeHY-Generative_AI/1-生成式人工智能基本原理/生成式人工智能(Generative AI)基本原理]]
+</details>
+
+---
+
 # vLLM
 <details class="home-dropdown">
 <summary>vLLM 框架中的算子</summary>
