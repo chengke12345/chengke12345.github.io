@@ -43,6 +43,24 @@ title: Technical Blogs
 
 ---
 
+# NVIDIA 产品架构体系 & AIDC 智算中心
+<details class="home-dropdown">
+<summary>NVIDIA 产品线与产品体系</summary>
+
+1. [[NVIDIA产品架构体系与AIDC智算中心/NVIDIA GPU/NvLink & NvSwitch]]
+2. [[NVIDIA产品架构体系与AIDC智算中心/NVIDIA GPU/NVIDIA GPU 产品形态 NVL, PCIe, SXM]]
+3. [[NVIDIA产品架构体系与AIDC智算中心/NVIDIA GPU/NVIDIA GPU 产品架构体系]]
+4. [[NVIDIA产品架构体系与AIDC智算中心/NVIDIA GPU/算力指标体系]]
+</details>
+
+<details class="home-dropdown">
+<summary>组网技术</summary>
+
+1. [[NVIDIA产品架构体系与AIDC智算中心/组网技术/组网技术]]
+</details>
+
+---
+
 # CUDA 
 <details class="home-dropdown">
 <summary>算子Operator基础原理</summary>
