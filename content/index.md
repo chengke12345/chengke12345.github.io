@@ -61,7 +61,29 @@ title: Technical Blogs
 
 ---
 
-# CUDA 
+# CUDA
+<details class="home-dropdown">
+<summary>CUDA编程范式</summary>
+
+1. [[CUDA/CUDA编程范式/GPU&CUDA系统生态环境]]
+2. [[CUDA/CUDA编程范式/CPU体系架构概述]]
+3. [[CUDA/CUDA编程范式/并行程序设计概述]]
+4. [[CUDA/CUDA编程范式/GPU体系架构概述]]
+5. [[CUDA/CUDA编程范式/CUDA-GPU 编程模型]]
+6. [[CUDA/CUDA编程范式/CUDA 编程(一)]]
+7. [[CUDA/CUDA编程范式/CUDA 编程(二)]]
+8. [[CUDA/CUDA编程范式/CUDA 编程(三) 矩阵相乘GEMM]]
+9. [[CUDA/CUDA编程范式/CUDA 程序基本优化(一) 并行规约 Parallel Reduction]]
+10. [[CUDA/CUDA编程范式/CUDA 程序基本优化(二) Warp分割]]
+11. [[CUDA/CUDA编程范式/CUDA 程序深入优化(三) 访存合并]]
+12. [[CUDA/CUDA编程范式/CUDA 程序深入优化(四) Bank冲突 Bank Conflict]]
+13. [[CUDA/CUDA编程范式/CUDA 程序深入优化(五) SM资源分割]]
+14. [[CUDA/CUDA编程范式/CUDA 程序深入优化(六) 数据预读 Data Prefetching]]
+15. [[CUDA/CUDA编程范式/专题一 GPU 线程层次结构]]
+16. [[CUDA/CUDA编程范式/专题二 GPU 存储层次结构]]
+17. [[CUDA/CUDA编程范式/专题三 线程层次与索引]]
+</details>
+
 <details class="home-dropdown">
 <summary>算子Operator基础原理</summary>
 
