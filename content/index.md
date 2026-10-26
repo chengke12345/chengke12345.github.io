@@ -3,11 +3,17 @@ title: Technical Blogs
 ---
 
 # LLM
-<details>
+<details class="home-dropdown">
 <summary>生成式人工智能基础</summary>
 
-1. [[LeeHY-Generative-AI/1-生成式人工智能基本原理/生成式人工智能(Generative AI)基本原理]]
-2. 附1.1-[[LeeHY-Generative-AI/1.1-附-PyTorch Tutorial/PyTorch Tutorial]]
+1. [[LLM/LeeHY-Generative-AI/1-生成式人工智能基本原理/生成式人工智能(Generative AI)基本原理]]
+2. 附1.1-[[LLM/LeeHY-Generative-AI/1.1-附-PyTorch Tutorial/PyTorch Tutorial]]
+</details>
+
+<details class="home-dropdown">
+<summary>大模型推理</summary>
+
+1. [[LLM/MHA Multi-Head-Attention/MHA Multi-Head-Attention 多头注意力机制]]
 </details>
 
 ---
