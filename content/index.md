@@ -14,12 +14,24 @@ title: Technical Blogs
 <details class="home-dropdown">
 <summary>大模型推理</summary>
 
-1. [[LLM/大模型推理/MHA Multi-Head-Attention/MHA Multi-Head-Attention 多头注意力机制]]
+1. [[LLM/大模型推理/LLM 推理流程简述/LLM 推理流程]]
+2. [[LLM/大模型推理/MHA Multi-Head-Attention/MHA Multi-Head-Attention 多头注意力机制]]
+3. [[LLM/大模型推理/Preemption 抢占]]
+4. [[LLM/大模型推理/KV Cache 显存指标说明]]
 </details>
 
 ---
 
 # vLLM
+<details class="home-dropdown">
+<summary>vLLM 入门简介</summary>
+
+1. [[vLLM/vLLM 入门简介/1-推理框架概述]]
+2. [[vLLM/vLLM 入门简介/2-Paged Attention & Continuous Batching 简介]]
+3. [[vLLM/vLLM 入门简介/3-vLLM 简明部署方法]]
+
+</details>
+
 <details class="home-dropdown">
 <summary>vLLM 框架中的算子</summary>
 
@@ -98,6 +110,16 @@ title: Technical Blogs
 2. [[CUDA/算子基础Operator/算子 kernel 的 AOT 和 JIT 编译模式]]
 3. [[CUDA/算子基础Operator/模型、框架与GPU架构适配性/模型、框架与GPU架构适配性]]
 4. [[CUDA/算子基础Operator/vLLM attention backend]]
+</details>
+
+---
+
+# Kubernetes
+<details class="home-dropdown">
+<summary>Kubernetes 核心技术</summary>
+
+1. [[Kubernetes/K8S-WangYang/1-kubernetes 相关概念]]
+2. [[Kubernetes/K8S-WangYang/2-kubernetes 组件]]
 </details>
 
 ---
