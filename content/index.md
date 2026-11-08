@@ -41,12 +41,14 @@ title: Technical Blogs
 </details>
 
 <details class="home-dropdown"> 
-<summary>vLLM 机制简析</summary>
+<summary>vLLM 机制详解</summary>
 
 1. [[vLLM/vLLM_Topics/GPU并行策略分析(PP_vs_TP)]]
-2. [[vLLM/vLLM_Topics/vLLM引擎-V0与V1]]
-3. [[vLLM/vLLM_Topics/vLLM 上下文限制(max-model-len)与并发限制(max-num-seqs)]]
-4. [[vLLM/vLLM_Topics/Locust 压力测试]]
+2. [[vLLM/vLLM_Topics/PP & Continuous Batching/PP & Continuous Batching]]
+3. [[vLLM/vLLM_Topics/TP & All-Reduce/TP & All-Reduce]]
+4. [[vLLM/vLLM_Topics/vLLM引擎-V0与V1]]
+5. [[vLLM/vLLM_Topics/vLLM 上下文限制(max-model-len)与并发限制(max-num-seqs)]]
+6. [[vLLM/vLLM_Topics/Locust 压力测试]]
 </details>
 
 <details class="home-dropdown">
@@ -181,7 +183,9 @@ title: Technical Blogs
 
 1. [[Tools/Nginx/Nginx 快速基础]]
 2. [[Tools/Nginx/nginx.conf 配置解析]]
-</details>
+3. [[Tools/Nginx/Nginx 流式网关(流式，限流，路由)]]
+4. [[Tools/Nginx/Nginx 网关延迟排查]]
+</details> 
 
 <details class="home-dropdown">
 <summary>YAML解析</summary>
@@ -192,7 +196,7 @@ title: Technical Blogs
 <details class="home-dropdown">
 <summary>Google Colab</summary>
 
-1. [[Tools/Google Colab]]
+- [[Tools/Google Colab]]
 </details>
 
 <details class="home-dropdown">
