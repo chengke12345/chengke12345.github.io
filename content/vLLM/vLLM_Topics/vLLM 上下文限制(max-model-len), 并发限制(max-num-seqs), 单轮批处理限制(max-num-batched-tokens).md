@@ -96,31 +96,48 @@ KV Cache 容量 和 `max-model-len` 一起在系统资源上限制了满长请�
 
 注意⚠️：把 max-num-seqs 调大，只是放宽调度上限，不代表系统有更强的并发能力。调大后可能提高总吞吐量，但是可能让每个请求变慢，甚至因为 KV 不足，产生抢占和重算。
 
-### 3. max-num-batched-tokens
+# `■` batch 单轮最大处理 token 限制 「max-num-batched-tokens」
 
-`max-num-batched-tokens`，限制了一次调度能处理多少 tokens, 在 decode 时，每条序列通常只新增一个 token。它主要影响的是 Prefill 阶段，一条请求可能要处理多个 token，有可能要在多轮调度才能处理完，这就影响了处理速度。
+`max-num-seqs` 是表示最大同时处理请求数，它其实就是 `batch size` 也就是系统中的一个 batch 的大小，但是它只限制了请求数，并没有限制这些请求占用的资源数。比如，同样是 8 个请求组成一个 batch。做8 个请求的 decode 和 8 个请求的 Prefill, 计算量是不一样的。
+
+因此，vLLM 对 batch, 除了 batch 中请求数量(max-num-seqs)的限制之外，还对一个 batch 内最多能进行多少 token 的计算进行了限制。
+
+> `max-num-batched-tokens`，限制了 batch 内的所有请求一次调度能处理多少 tokens, 在 decode 时，每条序列通常只新增一个 token。它主要影响的是 Prefill 阶段，一条请求可能要处理多个 token，有可能要在多轮调度才能处理完，这就影响了处理速度。
 
 注意⚠️：`max-num-batched-tokens` 设置的是每一轮调度，所有请求加起来可以处理多少 tokens, 也就是总预算。
 
-### 4. Continous Batching 和 算子并行计算速度
+# `■` Continuous Batching 和 算子效率
 
 Continuous Batching 的运行，算子内部计算时的并行度，和硬件一起决定系统的吞吐速度。也会影响并发的执行。这是在持续批处理，算子实现，GPU 硬件使用效率这个层面的底层运行效率限制。
 
 注意⚠️：Continous Batching 和算子计算效率通常不会直接限制允许的并发数，但会决定这些并发能以多快的速度往前推进。
 
-### 5. 总结
+# 总结
 
 `max-model-len` 和 KV Cache 容量决定了 KV Cache 资源层面对并发数的限制。`max-num-seqs`是框架层面对模型并发处理数的限制。它们两者共同决定了同时允许存在多少活跃的请求或者序列。KV Cache 容量加上 max-num-seqs 是对系统并发数量的直接限制。
 
+`max-num-seqs` 是最大并发处理请求数，或者就是 batch size, 即一个 batch 的大小上限，决定了vLLM 的一轮调度，最多要处理多少条序列。
+
 `max-num-batched-tokens` 决定了单次调度最大处理 tokens 数，它使得一个sequence可能要多轮调度才能完成计算，它影响一个 sequence 的计算速度。Continous Batching 和算子并行度运算效率，是在计算底层决定了一个请求的执行速度。
 
->  所以，前两项是在资源层面直接限制了系统处理请求的并发数，后两者是在计算速度层面影响一个请求完成计算的速度，他们间接影响系统并发处理能力。前两者决定请求能「同时挂多少」, 后两者决定 「挂上后能跑多快」，两个层面，四个因素，共同决定一个部署模型的并发处理能力。
+> [!abstract] 三个参数
+> vLLM 中有三个参数需要区分，<font color="orange">「max_num_seqs」</font>, <font color="orange">「max_model_len」</font>, <font color="orange">「max_num_batched_tokens」</font>。
+> ```
+> max_num_seqs             本轮最多处理多少条序列，即 batch size 或 并发处理请求数
+> max_num_batched_tokens   本轮处理 batch 时，最多处理token的上限(所有请求加起来)
+> max_model_len            vLLM 框架层面限制的最大上下文长度
+> ```
+
+
+
+>  `max-model-len`, `max-num-seqs`, `max-num-batched-tokens` 在资源层面直接限制了系统处理请求的并发数。
+>  Continuous Batching 和 算子效率以及 GPU 硬件，在计算速度层面影响一个请求完成计算的速度，他们间接影响系统并发处理能力。
+>  前面决定请求能「同时挂多少」, 后面决定 「挂上后能跑多快」，两个层面共同决定一个部署模型的并发处理能力。
 
 
 ---
 ### 附：查阅
 
-| ✅   |     |
-| --- | --- |
-|     |     |
+| ✅✅  |
+| --- |
 

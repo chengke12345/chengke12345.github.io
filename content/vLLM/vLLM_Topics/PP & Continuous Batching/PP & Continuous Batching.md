@@ -34,7 +34,45 @@ Continuous Batching 中的 batch, 逻辑上就一个, 从头到尾不断滚动�
 
 这就是 Continuous Batching 的基本原理。
 
-# 3. PP 空泡问题, Pipeline Bubble
+# 3. 「max_num_seqs」与「max_num_batched_tokens」
+
+上面说明了 Continuous Batching 中的 batch 是滚动更新(当然也可以从逻辑上看成是多个 batch)。vLLM 中可以设置参数对 batch 进行限制。
+
+- <font color="#45ce6e">「max_num_seqs」</font>: 表示系统最大同时处理的请求数，也就是请求并发数。允许同时处理的请求数上限，也就是 batch size 的大小, 即一个 batch 内的最大请求数(实际一个 batch 中有多少请求，还取决于 KV Cache 等其他约束条件，这里设置的是最大值)。
+  因此，这里的  `max_num_seqs` 我们可以认为就是 batch size 的大小，它表示最大请求并发数，也就是说在 vLLM 一轮调度中，要处理多少条请求？
+
+- <font color="#45ce6e">「max_num_batched tokens」</font>: 表示 vLLM 在一轮调度中，整个 batch 合计最多可以处理多少个 token。可以把它理解为<font color="orange">「每轮 token 预算」</font>。
+
+这里的一轮，指的是 vLLM 调度 batch 内的每个请求进行一轮计算。一轮计算对 decode 和 prefill 是不一样的含义。
+
+- Decode: 普通的自回归解码，每条请求每轮通常就处理一个 token, 也就是生成一个 token。即使已有 10000 个历史 token, 本轮也只占用一个预算，历史内容通过 KV Cache 参与计算。
+
+- Prefill: 本轮处理了多少个 prompt token, 就占用多少预算。
+  对于 Prefill, 一轮可以处理整个 prompt, 也可以只处理其中一个 chunk。因为 prompt 的 token 都是已知的，同一个请求中的多个 token 可以在一次向前计算中一起处理，并遵守因果注意力机制，不需要像 decode 那样，生成一个 token 才能知道下一个输入。
+
+例如，假设 `max_num_batched_tokens=1024`，有 A、B 两条请求持续做 decode，新请求 C 的 prompt 长度为 2500；忽略缓存命中和其他限制：
+
+|轮次|A、B 本轮计算|C 本轮计算|C 的输出|
+|---|---|---|---|
+|第 1 轮|各 decode 1 token|Prefill 前 1022 个 token|暂无|
+|第 2 轮|各 decode 1 token|Prefill 接下来的 1022 个 token|暂无|
+|第 3 轮|各 decode 1 token|Prefill 剩余 456 个 token|生成第 1 个输出 token|
+|第 4 轮|各 decode 1 token|Decode 1 token|生成第 2 个输出 token|
+
+第一，同一轮可以混合 Prefill 和 Decode, 每条序列推进的 token 数可以不同。
+第二，完成 prefill 最后一段那轮，就可以输出第一个 token，之前中间块主要用于建立 KV Cache, 不产生回答 token.
+
+
+> [!abstract] 总结 
+> vLLM 中有三个参数需要区分，<font color="orange">「max_num_seqs」</font>, <font color="orange">「max_model_len」</font>, <font color="orange">「max_num_batched_tokens」</font>。
+> ```
+> max_num_seqs             本轮最多处理多少条序列，即 batch size 或 并发处理请求数
+> max_num_batched_tokens   本轮处理 batch 时，最多处理token的上限(所有请求加起来)
+> max_model_len            vLLM 框架层面限制的最大上下文长度
+> ```
+
+
+# 4. PP 空泡问题, Pipeline Bubble
 
 <font color="orange">「PP, Pipeline Parallelism 流水线并行」</font>，会把模型分成几段，放在不同 GPU 上，每个 GPU 上的一段叫做一个 stage。
 <font color="orange">「空泡，bubble」</font>就是某段 GPU 因为等待数据或计算依赖，暂时没有有效计算的空闲时间。
@@ -56,7 +94,7 @@ Continouous Batching 从头到尾只有一个 batch 在工作，按照上面的�
 
 走完一次完整流水线，才能产生一个推理的 token，流水线上的任何时刻，对 batch 内的 request 都叫做「正在计算」状态。batch 中的 request 都是正在处理状态，此时即使有等待也是无法插入新 request 的，因为每个 request 在流水线上，都叫做正在处理。
 
-# 4. microbatch
+# 5. microbatch
 
 continuous batching 始终只有一个滚动 batch, 不可避免的就会形成 PP 空泡。
 
@@ -97,7 +135,7 @@ GPU2 ─┤
 GPU3 ─┘
 ```
 
-# 5. 总结
+# 6. 总结
 
 Continuous Batching 下，不管是 PP 还是 TP，逻辑上就是一个大的 batch 在不断滚动更新。也就是选一组 request, 让他们各自向前推进，普通 decode 下就是各自生成一个token。完成的请求退出，新请求补入，形成新的 batch。
 

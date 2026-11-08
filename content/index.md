@@ -47,7 +47,7 @@ title: Technical Blogs
 2. [[vLLM/vLLM_Topics/PP & Continuous Batching/PP & Continuous Batching]]
 3. [[vLLM/vLLM_Topics/TP & All-Reduce/TP & All-Reduce]]
 4. [[vLLM/vLLM_Topics/vLLM引擎-V0与V1]]
-5. [[vLLM/vLLM_Topics/vLLM 上下文限制(max-model-len)与并发限制(max-num-seqs)]]
+5. [[vLLM/vLLM_Topics/vLLM 上下文限制(max-model-len), 并发限制(max-num-seqs), 单轮批处理限制(max-num-batched-tokens)]]
 6. [[vLLM/vLLM_Topics/Locust 压力测试]]
 </details>
 
