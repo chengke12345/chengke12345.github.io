@@ -1,23 +1,4 @@
-启动虚拟机后，假设我们使用 RockyLinux。RockyLinux 9 以后的版本，全部采用 NetworkManager 代替老的 Network 去实现网络的管理。所以，登陆系统后设置网络，需要修改的配置文件是
-
-```bash
-cat /etc/NetworkManager/system-connections/ens160.nmconnection
-```
-
-有几张网卡就有几个 `ensxxx.nmconnetion`配置文件，数字最小的代表第一张网卡，以此类推。比如下面就有两张显卡， ens160 和 ens192
-
-![](Pasted%20image%2020261124120942.png)
-
-打开 ens160 显卡，这里可以把当前 IPV4 的工作方案从自动改为手动。然后再添加 `address1=192.168.66.11/24` 这里的 /24 表示 255.255.255.0 的子网掩码。
-
-![image|360](Pasted%20image%2020261124121212.png)![image|340](Pasted%20image%2020261124121748.png)
-
-如果有网关，可以加上 `address1=192.168.66.11, gw=xxx`, 当然还可以添加 dns 选项，指定 dns 服务器，只需要在 address1 下面，加上 `dns=xxx.xxx.xxx.xxx; yyy.yyy.yyy.yyy`, 多个 dns 服务器之间用分号分隔。
-
->注意⚠️：这里是把 IPv4 的工作方式，改为了手动 manual, 并且把 IP 改为了一个固定的 IP，192.168.66.11。意思就是这个网卡连接到的网络中，这个网卡就是固定 IP 192.168.66.11。
-
-修改完后，执行 `systemctl restart NetworkManager` ，这样就可以通过终端连接服务器了。
-
+这里讨论虚拟机环境是 RockyLinux, 其中一张网卡 `ens160.nmconnection`是 Host-Only 接入模式，固定 IP=192.168.66.11/24(还有另一张网卡是 `ens192.nmconnection`，NAT接入模式)。具体的虚拟网卡，虚拟网络接入模式，详细参考以下讨论。
 # 1. vmnet1 和 vmnet8 虚拟网络(先不讨论 vmnet0)
 
 VMWare 软件启动的时候，系统会默认初始化两个网络，即创建两个默认虚拟网络，`vmnet1` 和 `vmnet8`。宿主机默认会加入这两个网络。
@@ -91,3 +72,4 @@ vmware 启动的时候，会默认启动三个网络 vmnet0, vmnet1, vmnet8, 三
 
 <font color="orange">网络中接入网络的节点，虽然是主机，但是本质上是网卡或网络适配器 Network Adapter。网络对网络中节点的感知，只有网卡</font>. 
 默认情况下，vmware 会虚拟出交换机(网络) vmnet1 和 vmnet8, 并且在宿主机上虚拟出网卡，让宿主机加入相应网络，但宿主机不会加入 vmnet0。因为宿主机是用自己操作系统的物理机网络软件栈直接和局域网交换数据，所以宿主机上的 ipconfig 里看不到 VMware Network Adapter vmnet0 网卡，但是有 VMware Network Adapter vmnet1 和 VMware Network Adapter vmnet8 这两个网卡。这就是它加入这两个网络虚拟出的网卡。
+

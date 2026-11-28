@@ -78,7 +78,7 @@ Pause 的其中一个任务是回收僵尸进程。Pause 首先得是这些容�
 
 因此，理论上，<font color="deeppink">可以不借助 kubernetes 集群，只需要 Docker 就可以实现 Pod 的概念。</font>
 
-# 3. 回收僵尸进程
+# 4. 回收僵尸进程
 
 ## 容器进程
 
@@ -101,16 +101,8 @@ Pause 在回收进程的时候，也要遵循回收的权限规则，不能垮�
 > [!NOTE] 总结
 > <font color="lightblue">Pause 回收僵尸进程，回收的颗粒度是进程，不是容器。一个容器中可能会运行多个应用，这些应用是各自独立运行的进程，当它的父进程先退出时，它就成了孤儿进程，进而成为僵尸进程。默认重新指定父进程由 PID 1 收养，如果容器中有指定祖先进程，优先由它收养。通常情况下，会开启 `shareProcessNamespace: true`, Pause 容器是 PID 1，当出现孤儿或僵尸进程的时候，它会接管。所以，Pause 进程用这种方式管理回收僵尸进程。</font>
 
-# 附加：Rocky Linux 说明
 
-我们现在使用的操作系统都是 Linux，它是一种内核。基于这个内核，外面还要封装很多生态，比如包管理工具，进程管理工具，防火墙等等。封装了不同软件或生态以后，各个厂商或各个社区就推出了自己的发行版。最早的就是 RedHat, 然后就是 CentOS, 包括后面的 Fedora, Unbuntu 等等。
+# 5. Docker 实现 Pod
 
-Torvards Linux 写出了 Linux 操作系统内核，随后红帽公司成立，利用 Linux 内核，加上外围的软件生态，发布了 RedHat 版本。
-
-后期为了保证 RedHat 代码的稳定性，又推出了 Fedora 这个桌面版。Fedora 其实是 RedHat 的上游，当 RedHat 开发了新功能代码，先会发布到 Fedora 上进行测试，因为是桌面版，很多人使用。功能测试没问题以后，再被下发给 RedHat 企业版，供各大公司使用。Fedora 是开源免费的。 
-
-随后，CentOS 社区成立了。 RedHat 有一个特点，「服务收费，代码开源」。CenOS 社区拿到 RedHat 源代码之后，进行了一些修改，把其中一些授权软件移除，加上新的补充协议和优化等，就得到了一个新的发行版，「CenOS」。
-
-然后 RedHat 看到竞品以后，一锅端把 CenOS 社区收购了。现在 CentOS 已经停止服役，并且一些中小企业已经在逐渐往其他系统上做迁移了。RedHat 把 CenOS 项目关闭以后，发布了一个新的项目，CentOS Stream。当有新的功能代码发布给 Fedora, Fedora 测试没有问题以后，会发布给 CentOS Stream，CentOS Stream 发布没问题以后，再发布给 RedHat. 相当于 RedHat 成了 CentOS Stream 的下游。CentOS Stream 被称为滚动版，它会不断滚动更新，因此它就不再适合真正的企业商用化了。
-
-这时候，Rocky Linux 就出现了。它同样是从 RedHat 发布的源码进行修改，方式等同于之前的 CentOS. 而且，Rocky Linux 是由之前 CentOS 社区的创始人，去开创的一个新的社区，并且明确声明了要采取一些手段避免重蹈 CentOS 的覆辙。目前，几乎所有的云计算公司，都在跟投 Rocky Linux，也在各个云环境中支持 Rocky Linux。
+虚拟机环境配置参考 [4-RockyLinux环境配置](Kubernetes/K8S-WangYang/4-RockyLinux环境配置)
+在 [Docker 网络管理](Kubernetes/Docker%20网络管理/Docker%20网络管理) 中，我们在 Docker 网络管理的机制下，完全基于 Docker 提供了 Pod。所以，Pod 并不是 kubernetes 所独有的东西。 Pod 是一种概念，一种逻辑，只要符合这样的逻辑思想，都叫做 Pod。
